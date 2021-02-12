@@ -7,5 +7,6 @@ target 'MusicStore' do
 
   # Pods for MusicStore
    pod 'SwiftLint'
+   pod 'Kingfisher'
 
 end
