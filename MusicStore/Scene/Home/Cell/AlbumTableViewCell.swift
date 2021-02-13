@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Kingfisher
 
 class AlbumTableViewCell: UITableViewCell, Reusable {
 
@@ -16,7 +17,7 @@ class AlbumTableViewCell: UITableViewCell, Reusable {
     func configure(withAlbumVM album: AlbumViewModel) {
         titleLabel.text = album.track
         artistLabel.text = album.artist
-        albumImage.image = album.image
+        let url = URL(string: album.image)
+        albumImage.kf.setImage(with: url)
     }
-    
 }

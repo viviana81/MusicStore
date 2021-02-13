@@ -7,6 +7,10 @@
 
 import UIKit
 
+protocol HomeViewControllerDelegate: class {
+    func goToDetail(albumVM: AlbumViewModel)
+}
+
 class HomeViewController: UIViewController {
 
     // MARK: - Vars
@@ -35,7 +39,9 @@ class HomeViewController: UIViewController {
     
     lazy private var tableView: UITableView = {
         let tableView = UITableView()
+        tableView.register(AlbumTableViewCell.self)
         tableView.dataSource = self
+        tableView.delegate = self
         
         return tableView
     }()
@@ -51,6 +57,8 @@ class HomeViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
+    weak var delegate: HomeViewControllerDelegate?
+    
     // MARK: - Viewcontroller lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -60,19 +68,28 @@ class HomeViewController: UIViewController {
         placeholder.pin(to: view, insets: UIEdgeInsets(top: 60, left: 40, bottom: 60, right: 40))
         placeholder.isHidden = false
         self.navigationItem.titleView = resultSearchController.searchBar
+        viewModel.onReloadData = { [weak self] in
+            self?.tableView.reloadData()
+        }
     }
-      //  let urlString = URL(string: "http://itunes.apple.com/search?term=http://itunes.apple.com/search?term=Michael+Jackson")
-    
 }
 
 extension HomeViewController: UISearchResultsUpdating, UISearchBarDelegate {
    
     func updateSearchResults(for searchController: UISearchController) {
-        viewModel.search(for: searchController.searchBar.text)
+        viewModel.searchText = searchController.searchBar.text
+    }
+    
+   func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        guard let text = searchBar.text, !text.isEmpty else { return }
+    viewModel.search(withQuery: text)
+        tableView.isHidden = false
+        placeholder.isHidden = true
+        resultSearchController.isActive = false
     }
 }
 
-extension HomeViewController: UITableViewDataSource {
+extension HomeViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return viewModel.albumsVM.count
     }
@@ -84,5 +101,10 @@ extension HomeViewController: UITableViewDataSource {
         
         return cell
     }
-
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let albumVM = viewModel.albumsVM[indexPath.row]
+        delegate?.goToDetail(albumVM: albumVM)
+        
+    }
 }
