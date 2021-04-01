@@ -80,9 +80,9 @@ extension HomeViewController: UISearchResultsUpdating, UISearchBarDelegate {
         viewModel.searchText = searchController.searchBar.text
     }
     
-   func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         guard let text = searchBar.text, !text.isEmpty else { return }
-    viewModel.search(withQuery: text)
+        viewModel.search(withQuery: text)
         tableView.isHidden = false
         placeholder.isHidden = true
         resultSearchController.isActive = false

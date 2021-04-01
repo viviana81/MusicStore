@@ -32,7 +32,7 @@ extension HomeCoordinator: HomeViewControllerDelegate {
         let detailCoordinator = DetailCoordinator(album: albumVM.album, presenter: homeVC)
         detailCoordinator.start()
         coordinators.append(detailCoordinator)
-        
+        // per evitare il retain cycle
         detailCoordinator.onDismiss = { [weak self] in
             self?.coordinators.removeAll { $0 is DetailCoordinator  }
         }
